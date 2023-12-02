@@ -72,4 +72,4 @@ print('Part 1 Total: ', part1_total)
 print('Part 2 Total: ', part2_total)
 
 
-print(re.findall('(?<=one|two|three|four|five|six|seven|eight|nine|[0-9])', 'one23twone'))
+print(re.findall('enin|thgie|neves|xis|evif|ruof|eerht|owt|eno|[0-9]', ''.join(list('twone49twone')[::-1])))
