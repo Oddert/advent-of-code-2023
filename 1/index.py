@@ -24,7 +24,6 @@ def get_pairing(num_list):
 part1_coords = []
 
 for line in text:
-	line = line[:-1]
 	print(line)
 	nums = re.findall('[0-9]', line)
 	print(nums)
@@ -69,7 +68,6 @@ def parse_search(matcher, line, reverse_match=False):
 for line in text:
 	if line == '':
 		continue
-	line = line[:-1]
 	print('# line', line)
 	forward_matches = parse_search('one|two|three|four|five|six|seven|eight|nine|[0-9]', line)
 	reversed_matches = parse_search(f"{reverse_string('one|two|three|four|five|six|seven|eight|nine')}|[0-9]", reverse_string(line), True)

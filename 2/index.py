@@ -9,7 +9,6 @@ sys.path.append(r'C:\dev\advent-of-code-2023')
 from config import project_dir
 
 from utils.read_input import read_input
-from utils.string_utils import reverse_string
 
 text = read_input('./2/input.txt')
 
@@ -25,7 +24,6 @@ rules = {
 pt1_total = 0
 
 for game in text:
-    game = game[:-1]
     title, draws_str = game.split(': ')
     game_num = int(title[5:])
     print(game_num)
@@ -46,7 +44,6 @@ for game in text:
 pt2_total = 0
 
 for game in text:
-    game = game[:-1]
     max_draw_values = {
         'red': 0,
         'green': 0,
