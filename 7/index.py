@@ -35,7 +35,6 @@ card_hierarchy = {
     '4': 2,
     '3': 1,
     '2': 0,
-    '1': -1,
 }
 
 def quicksort(items, comparator):
