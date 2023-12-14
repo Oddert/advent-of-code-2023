@@ -81,16 +81,23 @@ def rank_hand(hand: str):
             return 7
 
 def linear_comparison(item1: str, item2: str, idx: int = 0):
+    if idx >= len(item1):
+        return 'same'
+    if card_hierarchy[item1[idx]] == card_hierarchy[item2[idx]]:
+        return linear_comparison(item1, item2, idx + 1)
+    return card_hierarchy[item1[idx]] <= card_hierarchy[item2[idx]]
+
+def linear_comparison2(item1: str, item2: str, idx: int = 0):
     # print('doing linear comparison round ', idx, item1, item2)
     if idx == len(item1) - 1:
         # print('...end of index')
         return 'same'
     if card_hierarchy[item1[idx]] == card_hierarchy[item2[idx]]:
         # print('hierarchies are the same..')
-        return linear_comparison(item1, item2, idx + 1)
+        return linear_comparison2(item1, item2, idx + 1)
     # print(card_hierarchy[item1[idx]], card_hierarchy[item2[idx]])
     # print(card_hierarchy[item1[idx]] < card_hierarchy[item2[idx]])
-    return card_hierarchy[item1[idx]] <= card_hierarchy[item2[idx]]
+    return card_hierarchy[item1[idx]] < card_hierarchy[item2[idx]]
 
 def comparator(item1, item2, left_side=False):
     # ranking into categories
@@ -106,6 +113,7 @@ def comparator(item1, item2, left_side=False):
 class Node:
     def __init__(self, row) -> None:
         split = row.split(' ')
+        split[0] = split[0][::-1]
         self.left = None
         self.right = None
         self.rank = rank_hand(split[0])
@@ -118,8 +126,7 @@ class Node:
         elif child_node.rank > self.rank:
             self.add_child_right(child_node)
         else:
-            child_larger = linear_comparison(child_node.hand, self.hand)
-            print('=>', child_node.hand, self.hand, 'child_larger', child_larger)
+            child_larger = linear_comparison2(child_node.hand, self.hand)
             if child_larger:
                 self.add_child_left(child_node)
             else:
@@ -127,18 +134,14 @@ class Node:
 
     def add_child_left(self, child_node):
         if self.left:
-            print('left is defined, passing node...')
             self.left.add_child(child_node)
         else:
-            print('left is not defined, setting to left')
             self.left = child_node
 
     def add_child_right(self, child_node):
         if self.right:
-            print('right is defined, passing node...')
             self.right.add_child(child_node)
         else:
-            print('right is not defined, setting to right')
             self.right = child_node
 
     def to_array(self):
@@ -169,11 +172,12 @@ for line in text:
 
 print(len(hands))
 sorted_hands = quicksort(hands, comparator)
-print(sorted_hands)
+# print(sorted_hands)
 print(len(sorted_hands))
 
 pt1_idx = 1
 for hand in sorted_hands:
+    # print(hand)
     score = pt1_idx * bids[hand]
     pt1_value += score
     # print(hand, bids[hand], score, pt1_idx)
@@ -216,28 +220,107 @@ for arr in sectioned_arrays:
     print('==================================', arr)
     print(sectioned_arrays[arr])
 
-# print(bids)
+
+root_node = Node(text[0])
+for hand in text[1:]:
+    root_node.add_child(Node(hand))
+    
+alt_list = root_node.to_array()
+
+alt_total = 0
+j = 0
+print(len(alt_list), len(sorted_hands))
+for alt_hand in alt_list:
+    alt_total += int(alt_hand[1]) * (j + 1)
+    # print(alt_hand[0], sorted_hands[j], alt_hand[0] == sorted_hands[j])
+    j += 1
 
 # Part 2
 pt2_value = 0
 
+card_hierarchy_pt2 = {
+    'A': 12,
+    'K': 11,
+    'Q': 10,
+    'T': 9,
+    '9': 8,
+    '8': 7,
+    '7': 6,
+    '6': 5,
+    '5': 4,
+    '4': 3,
+    '3': 2,
+    '2': 1,
+    'J': 0,
+}
+
+
+def convert_hand_pt2(hand: str):
+    hand_no_jay = hand.replace('J', '')
+    initial_set = {}
+    if hand_no_jay == '':
+        return hand
+
+    for char in list(hand_no_jay):
+        if not char in initial_set:
+            initial_set[char] = 1
+        else:
+            initial_set[char] += 1
+
+    largest = [hand_no_jay[0], 1]
+
+    for char, count in initial_set.items():
+        if count > largest[1]:
+            largest = [char, count]
+    return hand.replace('J', largest[0])
+
+
+def linear_comparison_pt2(item1: str, item2: str, idx: int = 0):
+    if item1 == '9A4JJ' or item2 == '9A4JJ':
+        print(f'loop idx {idx}, {item1} {item2}')
+    if idx >= len(item1):
+        print('end of index...')
+        return 'same'
+    if item1 == '9A4JJ' or item2 == '9A4JJ':
+        print(item1[idx], item2[idx], card_hierarchy_pt2[item1[idx]] == card_hierarchy_pt2[item2[idx]])
+        print(card_hierarchy_pt2[item1[idx]], card_hierarchy_pt2[item2[idx]], card_hierarchy_pt2[item1[idx]] == card_hierarchy_pt2[item2[idx]])
+    if card_hierarchy_pt2[item1[idx]] == card_hierarchy_pt2[item2[idx]]:
+        if item1 == '9A4JJ' or item2 == '9A4JJ':
+            print('items are the same, going to loop again...')
+        return linear_comparison_pt2(item1, item2, idx + 1)
+    if item1 == '9A4JJ' or item2 == '9A4JJ':
+        print('final check', card_hierarchy_pt2[item1[idx]] <= card_hierarchy_pt2[item2[idx]])
+    return card_hierarchy_pt2[item1[idx]] <= card_hierarchy_pt2[item2[idx]]
+
+def comparator_pt2(item1, item2, left_side=False):
+    # ranking into categories
+    if item1 == '9A4JJ' or item2 == '9A4JJ':
+        print(f'item 1 converted from {item1} to {convert_hand_pt2("" + item1)}')
+        print(f'item 2 converted from {item2} to {convert_hand_pt2("" + item2)}')
+    rank1 = rank_hand(convert_hand_pt2("" + item1))
+    rank2 = rank_hand(convert_hand_pt2("" + item2))
+    if rank1 == rank2:
+        if item1 == '9A4JJ' or item2 == '9A4JJ':
+            print('-----------------------------')
+        comp = linear_comparison_pt2(item1, item2)
+        if comp == 'same':
+            return left_side
+        return comp
+    return rank1 < rank2
+
+print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+sorted_hands_pt2 = quicksort(hands, comparator_pt2)
+print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+
+print(sorted_hands_pt2)
+pt2_idx = 1
+for hand in sorted_hands_pt2:
+    # print(pt2_idx, hand, bids[hand], pt2_idx * bids[hand])
+    print(hand)
+    pt2_value += pt2_idx * bids[hand]
+    pt2_idx += 1
+
 print('Part 1 Total: ', pt1_value)
 print('Part 2 Total: ', pt2_value)
 
-root_node = Node(text[0])
-for hand in text[1:]:
-    print('--------------------')
-    root_node.add_child(Node(hand))
-# root_node.add_child(Node(text[1]))
-# print('--------------------')
-# root_node.add_child(Node(text[2]))
-# print('--------------------')
-alt_list = root_node.to_array()
-print(alt_list)
-
-j = 0
-print(len(alt_list), len(sorted_hands))
-for alt_hand in alt_list:
-    print(alt_hand[0], sorted_hands[j], alt_hand[0] == sorted_hands[j])
-    j += 1
-# print(root_node.to_json())
+print(convert_hand_pt2('9A4JJ'))
