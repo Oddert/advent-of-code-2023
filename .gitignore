@@ -161,3 +161,5 @@ cython_debug/
 
 # Msc
 envfile.ini
+input.txt
+example.txt
