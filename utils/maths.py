@@ -58,8 +58,3 @@ def lowest_common_multiple(*numbers):
     for factor in factor_list:
         total *= factor
     return total
-
-print('=========================')
-# print('lowest_common_multiple(16, 18)', lowest_common_multiple(16, 18))
-print('lowest_common_multiple(2, 6)', lowest_common_multiple(2, 6))
-# print(most_common_item([2, 2, 2, 3, 3]))
