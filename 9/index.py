@@ -1,12 +1,10 @@
 import sys
-import re
 
 # Needed to import from folder directory. Replace with your own project.
 # Probably a better way to do this that doesn't involve revealing my own file structure but whatever, you're not my mum. 
 sys.path.append(r'C:\dev\advent-of-code-2023')
 
 from utils.read_input import read_input, read_input_raw
-from utils.maths import lowest_common_multiple
 
 # raw_text = read_input_raw('./9/example.txt')
 # text = read_input('./9/example.txt')
