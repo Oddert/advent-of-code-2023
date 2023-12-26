@@ -1,4 +1,4 @@
-import math
+import math as maths
 
 def most_common_item(arr: list):
     count = {}
@@ -34,7 +34,7 @@ def prime_factors(number: int):
 
     # 1 is skipped, number is now odd so 2 is skipped.
     # Loop over multiples of 2 up to the square root.
-    for i in range(3, int(math.sqrt(number)) + 1, 2):
+    for i in range(3, int(maths.sqrt(number)) + 1, 2):
         # For each value, attempt to divide number by idx.
         while number % i == 0:
             factors.append(i)
@@ -52,7 +52,7 @@ def lowest_common_multiple(*numbers):
     for number in numbers:
         primes = prime_factors(number)
         highest_factor_count = most_common_item(primes)
-        highest_factor = math.pow(*highest_factor_count)
+        highest_factor = maths.pow(*highest_factor_count)
         factor_list = [*factor_list, highest_factor]
     total = 1
     for factor in factor_list:
